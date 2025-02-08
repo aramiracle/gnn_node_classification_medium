@@ -21,23 +21,31 @@ def main():
     k_folds = 5
     eval_interval = 25
     learning_rate = 0.001
+    random_seed = 42  # Random seed for reproducibility
 
     final_results = {}
 
     # Iterate through each dataset and perform cross-validation.
     for dataset_name in datasets:
         print(f"\nEvaluating on {dataset_name} dataset")
-        trainer = GraphTrainer(dataset_name=dataset_name,
-                               dataset_root=dataset_root,
-                               model_class=GAT,
-                               hidden_channels=hidden_channels,
-                               num_heads=num_heads,
-                               feature_dropout=feature_dropout,
-                               attention_dropout=attention_dropout,
-                               num_epochs=num_epochs,
-                               k_folds=k_folds,
-                               eval_interval=eval_interval,
-                               learning_rate=learning_rate)
+        
+        # Initialize the GraphTrainer with the specified hyperparameters.
+        trainer = GraphTrainer(
+            dataset_name=dataset_name,
+            dataset_root=dataset_root,
+            model_class=GAT,
+            hidden_channels=hidden_channels,
+            num_heads=num_heads,
+            feature_dropout=feature_dropout,
+            attention_dropout=attention_dropout,
+            num_epochs=num_epochs,
+            k_folds=k_folds,
+            eval_interval=eval_interval,
+            learning_rate=learning_rate,
+            random_seed=random_seed  # Ensure reproducibility for each dataset
+        )
+        
+        # Perform cross-validation and get the averaged results.
         avg_results = trainer.cross_validate()
         final_results[dataset_name] = avg_results
 

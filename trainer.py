@@ -131,7 +131,7 @@ class GraphTrainer:
     def __init__(self, dataset_name, dataset_root, model_class, 
                  hidden_channels=16, num_heads=8, feature_dropout=0.6, 
                  attention_dropout=0.6, num_epochs=1000, k_folds=5, 
-                 eval_interval=25, learning_rate=0.001):
+                 eval_interval=25, learning_rate=0.001, random_seed=42):
         self.dataset_name = dataset_name
         self.dataset_root = dataset_root
         self.model_class = model_class
@@ -144,13 +144,13 @@ class GraphTrainer:
         self.eval_interval = eval_interval
         self.learning_rate = learning_rate
 
+        # Set random seed for reproducibility
+        torch.manual_seed(random_seed)
+        np.random.seed(random_seed)
+
         # Load the Planetoid dataset.
         self.dataset = Planetoid(root=self.dataset_root, name=self.dataset_name)
         self.data = self.dataset[0]
-        # Ensure a test mask exists; if not, create one that uses 20% of the nodes.
-        if not hasattr(self.data, 'test_mask'):
-            self.data.test_mask = torch.zeros(self.data.num_nodes, dtype=torch.bool)
-            self.data.test_mask[:int(0.2 * self.data.num_nodes)] = True
 
     def cross_validate(self):
         """
